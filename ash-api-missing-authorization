@@ -1,0 +1,32 @@
+rules:
+  - id: ash-api-missing-authorization
+    languages: [elixir]
+    severity: HIGH
+    message: >
+      Ash API missing authorization configuration. Without `authorize?: true`
+      or the `Ash.Policy.Authorizer` extension, authorization checks won't run.
+    patterns:
+      - pattern: |
+          defmodule $MOD do
+            use Ash.Api
+            ...
+          end
+      - pattern-not: |
+          defmodule $MOD do
+            use Ash.Api, authorize?: true
+            ...
+          end
+      - pattern-not: |
+          defmodule $MOD do
+            use Ash.Api
+            ...
+            extensions: [..., Ash.Policy.Authorizer, ...]
+            ...
+          end
+    metadata:
+      category: security
+      technology: Ash
+      cwe: "CWE-284: Improper Access Control"
+      references:
+        - https://hexdocs.pm/ash/authorization.html
+      risk: High
