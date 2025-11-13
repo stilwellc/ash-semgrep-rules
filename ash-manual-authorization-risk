@@ -1,0 +1,27 @@
+rules:
+  - id: ash-manual-authorization-risk
+    languages: [elixir]
+    severity: HIGH
+    message: >
+      Manual call to `authorize/2` or `authorize/3` detected. Manual authorization
+      can be forgotten, misused, or bypassed. Ensure that `authorize/3` is called
+      with a valid actor and errors are not silently ignored.
+    patterns:
+      - pattern-either:
+          - pattern: |
+              authorize($RESOURCE, nil, $OPTIONS)
+          - pattern: |
+              authorize($RESOURCE, $ACTOR, $OPTIONS)
+          - pattern: |
+              try do
+                authorize($RESOURCE, $ACTOR, $OPTIONS)
+              rescue
+                _ -> ...
+              end
+    metadata:
+      category: security
+      technology: Ash
+      cwe: "CWE-285: Improper Authorization"
+      references:
+        - https://hexdocs.pm/ash/authorization.html#authorize-3
+      risk: High

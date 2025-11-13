@@ -1,0 +1,35 @@
+rules:
+  - id: ash-resource-missing-policy
+    languages: [elixir]
+    severity: HIGH
+    message: >
+      Ash resource defined without authorization. Missing `authorize? true`
+      or `policies do` block. This resource may skip access control entirely.
+    patterns:
+      - pattern: |
+          defmodule $MOD do
+            use Ash.Resource
+            ...
+          end
+      - pattern-not: |
+          defmodule $MOD do
+            use Ash.Resource
+            ...
+            authorize? true
+            ...
+          end
+      - pattern-not: |
+          defmodule $MOD do
+            use Ash.Resource
+            ...
+            policies do
+              ...
+            end
+          end
+    metadata:
+      category: security
+      technology: Ash
+      cwe: "CWE-284: Improper Access Control"
+      references:
+        - https://hexdocs.pm/ash/authorization.html
+      risk: High

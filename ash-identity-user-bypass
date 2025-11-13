@@ -1,0 +1,28 @@
+rules:
+  - id: ash-identity-user-bypass
+    languages: [elixir]
+    severity: HIGH
+    message: >
+      ⚠️ Direct reference to `identity.user` (or `identity.*`) detected outside
+      of an authorization or policy context. This can bypass the Ash policy engine.
+    patterns:
+      - pattern-either:
+          - pattern: $X.identity.user
+          - pattern: $X.identity.$FIELD
+      - pattern-not-inside: |
+          authorize($ARGS)
+      - pattern-not-inside: |
+          Ash.Policy.do
+      - pattern-not-inside: |
+          policy do
+      - pattern-not-inside: |
+          action ... do
+            authorize?: true
+          end
+    metadata:
+      category: security
+      technology: Ash
+      cwe: "CWE-285: Improper Authorization"
+      references:
+        - https://hexdocs.pm/ash/authorization.html
+      risk: High

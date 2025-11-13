@@ -1,0 +1,22 @@
+rules:
+  - id: ashoban-job-missing-actor
+    languages: [elixir]
+    severity: HIGH
+    message: >
+      Background job missing a valid `actor:`. Nil or placeholder actor may
+      bypass policy enforcement. Add `actor: :system` or another explicit actor.
+    pattern: |
+      use AshOban.Job,
+        ...
+    pattern-not: |
+      use AshOban.Job,
+        ...,
+        actor: ($ACTOR & !nil),
+        ...
+    metadata:
+      category: security
+      technology: Ash
+      cwe: "CWE-285: Improper Authorization"
+      references:
+        - https://ash-hq.org/docs/guides/ash_oban/latest/get-started
+      risk: High

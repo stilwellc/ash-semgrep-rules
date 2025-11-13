@@ -1,0 +1,19 @@
+rules:
+  - id: ash-policy-unsafe-expression
+    languages: [elixir]
+    severity: MEDIUM
+    message: >
+      Policy rule contains an unsafe expression (`always()` or trivially true/false),
+      which may disable enforcement. Replace with a meaningful predicate.
+    patterns:
+      - pattern-either:
+          - pattern: authorize_if always()
+          - pattern: authorize_if expr(true)
+          - pattern: forbid_unless expr(false)
+    metadata:
+      category: security
+      technology: Ash
+      cwe: "CWE-285: Improper Authorization"
+      references:
+        - https://hexdocs.pm/ash/authorization.html
+      risk: Medium

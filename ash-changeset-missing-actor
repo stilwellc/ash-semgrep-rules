@@ -1,0 +1,20 @@
+rules:
+  - id: ash-changeset-missing-actor
+    languages: [elixir]
+    severity: HIGH
+    message: >
+      Ash changeset or query executed without a valid `actor:` context.
+      Nil or placeholder actors may bypass policy enforcement.
+    patterns:
+      - pattern-either:
+          - pattern: Ash.Changeset.for_$ACTION($RESOURCE, $INPUT)
+          - pattern: Ash.Query.for_read($RESOURCE, $ACTION)
+      - pattern-not: Ash.Changeset.for_$ACTION($RESOURCE, $INPUT, actor: ($ACTOR & !nil))
+      - pattern-not: Ash.Query.for_read($RESOURCE, $ACTION, actor: ($ACTOR & !nil))
+    metadata:
+      category: security
+      technology: Ash
+      cwe: "CWE-285: Improper Authorization"
+      references:
+        - https://hexdocs.pm/ash/authorization.html#authorize-3
+      risk: High
